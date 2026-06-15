@@ -1,22 +1,27 @@
-import pytest  # import pytest framework untuk create fixture
+import pytest
 
-from selenium import webdriver  # import Selenium WebDriver
-from selenium.webdriver.chrome.service import Service  # Chrome service setup
-from webdriver_manager.chrome import ChromeDriverManager  # auto install ChromeDriver
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 
-@pytest.fixture  # fixture = reusable setup untuk test
+@pytest.fixture
 def driver():
 
-    options = webdriver.ChromeOptions()  # set Chrome options (browser config)
-    options.add_argument("--no-sandbox")  # disable sandbox (stability)
-    options.add_argument("--disable-dev-shm-usage")  # fix memory issue
+    options = webdriver.ChromeOptions()
+
+    # For GitHub Actions (Linux)
+    options.add_argument("--headless=new")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--window-size=1920,1080")
 
     driver = webdriver.Chrome(
-        service=Service(ChromeDriverManager().install()),  # auto download & setup driver
-        options=options  # apply browser options
+        service=Service(ChromeDriverManager().install()),
+        options=options
     )
 
-    driver.maximize_window()  # maximize browser window
-    yield driver  # pass driver ke test case
-    driver.quit()  # close browser after test selesai
+    yield driver
+
+    driver.quit()
